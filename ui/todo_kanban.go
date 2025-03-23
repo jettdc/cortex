@@ -50,6 +50,10 @@ func (kanban *TodoKanban) Render() {
 		AddItem(doingList, 0, 1, true).
 		AddItem(doneList, 0, 1, false)
 
+	withFooter := tview.NewFrame(flex).
+		SetBorders(0, 0, 0, 0, 0, 0)
+	setDefaultFooter(withFooter)
+
 	GetApp().SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if event.Key() == tcell.KeyEscape || event.Rune() == 'q' {
 			GetApp().Stop()
@@ -58,6 +62,7 @@ func (kanban *TodoKanban) Render() {
 		if itemIsActivated {
 			if event.Key() == tcell.KeyEnter {
 				deactivateItemFromList(todoList, doingList, doneList)
+				setDefaultFooter(withFooter)
 			} else if event.Key() == tcell.KeyUp {
 				moveSelectedUp(todoList, doingList, doneList)
 			} else if event.Key() == tcell.KeyDown {
@@ -76,13 +81,14 @@ func (kanban *TodoKanban) Render() {
 				decrementX(todoList, doingList, doneList)
 			} else if event.Key() == tcell.KeyEnter {
 				activateItemFromList(todoList, doingList, doneList)
+				setActivatedFooter(withFooter)
 			}
 		}
 
 		return event
 	})
 
-	if err := GetApp().SetRoot(flex, true).SetFocus(flex).Run(); err != nil {
+	if err := GetApp().SetRoot(withFooter, true).SetFocus(flex).Run(); err != nil {
 		panic(err)
 	}
 }
@@ -194,6 +200,8 @@ func removeColorTags(text string) string {
 	return text
 }
 
+// TODO(jcrowson): Only move up/down within priority
+
 func moveSelectedUp(lists ...*tview.List) {
 	listToActivateIn := lists[cursorX]
 
@@ -258,6 +266,16 @@ func moveSelectedLeft(lists ...*tview.List) {
 
 	// Set the current item in the list to the one that was moved
 	moveTo.SetCurrentItem(moveFromSelectedIndex)
+}
+
+func setDefaultFooter(frame *tview.Frame) {
+	frame.Clear()
+	frame.AddText("[↑ - Up] [↓ - Down] [← - Left] [→ - Right] [ENTER - Select] [q - Quit]", false, tview.AlignBottom, tcell.ColorWhite)
+}
+
+func setActivatedFooter(frame *tview.Frame) {
+	frame.Clear()
+	frame.AddText("[↑ - Move up] [↓ - Move down] [← - Move left] [→ - Move right] [ENTER - Deselect] [e - Edit] [p - Set priority] [q - Quit]", false, tview.AlignBottom, tcell.ColorWhite)
 }
 
 //

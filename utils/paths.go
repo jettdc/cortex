@@ -21,8 +21,6 @@ func EnsureCortexDir() error {
 		return fmt.Errorf("could not create directory %s: %v", dirPath, err)
 	}
 
-	fmt.Println("Directory created at:", dirPath)
-
 	cortexDir = dirPath
 
 	return nil

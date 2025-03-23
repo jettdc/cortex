@@ -8,6 +8,7 @@ type Todo struct {
 	Id       int
 	Message  string
 	Priority int8
+	Status   string
 }
 
 func InsertTodo(message string, priority int8) {
@@ -19,7 +20,7 @@ func InsertTodo(message string, priority int8) {
 }
 
 func GetTodos() []Todo {
-	getSql := `SELECT Id, Message, Priority FROM todos ORDER BY Priority`
+	getSql := `SELECT id, message, priority, status FROM todos ORDER BY Priority`
 	rows, err := database.Query(getSql)
 	if err != nil {
 		log.Fatal(err)
@@ -31,9 +32,10 @@ func GetTodos() []Todo {
 		var id int
 		var message string
 		var priority int8
+		var status string
 
 		// Scan the current row into variables
-		if err := rows.Scan(&id, &message, &priority); err != nil {
+		if err := rows.Scan(&id, &message, &priority, &status); err != nil {
 			log.Fatal(err)
 		}
 
@@ -41,6 +43,7 @@ func GetTodos() []Todo {
 			Id:       id,
 			Message:  message,
 			Priority: priority,
+			Status:   status,
 		})
 	}
 

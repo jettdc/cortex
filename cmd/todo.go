@@ -2,7 +2,10 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/gdamore/tcell/v2"
 	"github.com/jettdc/cortex/v2/db"
+	"github.com/jettdc/cortex/v2/ui"
+	"github.com/rivo/tview"
 	"github.com/spf13/cobra"
 	"os"
 )
@@ -35,8 +38,40 @@ var todoLsCmd = &cobra.Command{
 	Short: "Gets all the todos",
 	Run: func(cmd *cobra.Command, args []string) {
 		results := db.GetTodos()
-		for _, result := range results {
-			fmt.Println(result)
+
+		list := tview.NewList().ShowSecondaryText(false)
+		list.SetBorder(true).SetTitle("TODO")
+
+		list.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+			if event.Key() == tcell.KeyRune || event.Rune() == 'q' {
+				// Exit the application on Escape
+				ui.GetApp().Stop()
+			}
+			return event
+		})
+
+		list2 := tview.NewList().ShowSecondaryText(false)
+		list2.SetBorder(true).SetTitle("Doing")
+
+		list3 := tview.NewList().ShowSecondaryText(false)
+		list3.SetBorder(true).SetTitle("Done")
+
+		for i, result := range results {
+			tx := fmt.Sprintf("[P%d] %s", result.Priority, result.Message)
+			list.AddItem(tview.Escape(tx), "", rune(i+1), nil)
+		}
+
+		list.SetCurrentItem(0)
+		main, _ := list.GetItemText(0)
+		list.SetItemText(0, fmt.Sprintf("[white:green]%s[white:green]", main), "")
+
+		flex := tview.NewFlex().
+			AddItem(list, 0, 1, true).
+			AddItem(list2, 0, 1, true).
+			AddItem(list3, 0, 1, false)
+
+		if err := ui.GetApp().SetRoot(flex, true).SetFocus(flex).Run(); err != nil {
+			panic(err)
 		}
 	},
 }

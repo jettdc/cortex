@@ -5,13 +5,13 @@ import (
 )
 
 type Todo struct {
-	id       int
-	message  string
-	priority int8
+	Id       int
+	Message  string
+	Priority int8
 }
 
 func InsertTodo(message string, priority int8) {
-	insertSQL := `INSERT INTO todos (message, priority) VALUES (?, ?)`
+	insertSQL := `INSERT INTO todos (Message, Priority) VALUES (?, ?)`
 	_, err := database.Exec(insertSQL, message, priority)
 	if err != nil {
 		log.Fatal(err)
@@ -19,7 +19,7 @@ func InsertTodo(message string, priority int8) {
 }
 
 func GetTodos() []Todo {
-	getSql := `SELECT id, message, priority FROM todos ORDER BY priority`
+	getSql := `SELECT Id, Message, Priority FROM todos ORDER BY Priority`
 	rows, err := database.Query(getSql)
 	if err != nil {
 		log.Fatal(err)
@@ -38,9 +38,9 @@ func GetTodos() []Todo {
 		}
 
 		results = append(results, Todo{
-			id:       id,
-			message:  message,
-			priority: priority,
+			Id:       id,
+			Message:  message,
+			Priority: priority,
 		})
 	}
 

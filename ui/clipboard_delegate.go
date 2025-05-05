@@ -1,9 +1,12 @@
 package ui
 
 import (
+	"github.com/atotto/clipboard"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/jettdc/cortex/v2/db"
+	"log"
 )
 
 func newItemDelegate(keys *delegateKeyMap) list.DefaultDelegate {
@@ -12,8 +15,8 @@ func newItemDelegate(keys *delegateKeyMap) list.DefaultDelegate {
 	d.UpdateFunc = func(msg tea.Msg, m *list.Model) tea.Cmd {
 		var title string
 
-		if i, ok := m.SelectedItem().(todoItem); ok {
-			title = i.data.Message
+		if i, ok := m.SelectedItem().(item); ok {
+			title = i.Title()
 		} else {
 			return nil
 		}
@@ -22,11 +25,24 @@ func newItemDelegate(keys *delegateKeyMap) list.DefaultDelegate {
 		case tea.KeyMsg:
 			switch {
 			case key.Matches(msg, keys.choose):
-				return m.NewStatusMessage(statusMessageStyle("You chose " + title))
+				item := getActiveItem(m)
+
+				desc := item.Data().Value
+				err := clipboard.WriteAll(desc)
+				if err != nil {
+					log.Fatal(err)
+				}
+
+				return m.NewStatusMessage(statusMessageStyle("Copied: " + title))
 
 			case key.Matches(msg, keys.remove):
+				item := getActiveItem(m)
+
+				db.DeleteClipboardValue(item.Data().Id)
+
 				index := m.Index()
 				m.RemoveItem(index)
+
 				if len(m.Items()) == 0 {
 					keys.remove.SetEnabled(false)
 				}
@@ -86,4 +102,15 @@ func newDelegateKeyMap() *delegateKeyMap {
 			key.WithHelp("x", "delete"),
 		),
 	}
+}
+
+func getActiveItem(m *list.Model) item {
+	index := m.Index()
+	x := m.Items()[index]
+	myItem, ok := x.(item) // assert concrete type
+	if ok {
+		return myItem
+	}
+
+	panic("Item not found")
 }

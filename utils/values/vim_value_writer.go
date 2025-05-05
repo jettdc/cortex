@@ -2,7 +2,7 @@ package values
 
 import (
 	"fmt"
-	"github.com/jettdc/cortex/v2/utils"
+	"github.com/jettdc/cortex/utils"
 	"os"
 	"os/exec"
 	"strings"

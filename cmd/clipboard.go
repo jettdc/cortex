@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/jettdc/cortex/v2/db"
-	"github.com/jettdc/cortex/v2/ui"
+	"github.com/jettdc/cortex/db"
+	"github.com/jettdc/cortex/ui"
 	"github.com/spf13/cobra"
 )
 

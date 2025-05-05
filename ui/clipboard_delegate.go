@@ -5,7 +5,7 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/jettdc/cortex/v2/db"
+	"github.com/jettdc/cortex/db"
 	"log"
 )
 

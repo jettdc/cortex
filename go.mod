@@ -1,4 +1,4 @@
-module github.com/jettdc/cortex/v2
+module github.com/jettdc/cortex
 
 go 1.24.1
 

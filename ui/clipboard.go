@@ -2,7 +2,7 @@ package ui
 
 import (
 	"fmt"
-	"github.com/jettdc/cortex/v2/db"
+	"github.com/jettdc/cortex/db"
 	"os"
 
 	"github.com/charmbracelet/bubbles/list"

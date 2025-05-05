@@ -3,7 +3,7 @@ package db
 import (
 	"database/sql"
 	_ "embed"
-	"github.com/jettdc/cortex/v2/utils"
+	"github.com/jettdc/cortex/utils"
 	_ "github.com/mattn/go-sqlite3"
 	"log"
 )

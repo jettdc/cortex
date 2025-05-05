@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/jettdc/cortex/v2/db"
-	"github.com/jettdc/cortex/v2/utils/values"
+	"github.com/jettdc/cortex/db"
+	"github.com/jettdc/cortex/utils/values"
 	"github.com/spf13/cobra"
 )
 

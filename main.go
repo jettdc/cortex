@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/jettdc/cortex/v2/cmd"
-	"github.com/jettdc/cortex/v2/db"
-	"github.com/jettdc/cortex/v2/utils"
+	"github.com/jettdc/cortex/cmd"
+	"github.com/jettdc/cortex/db"
+	"github.com/jettdc/cortex/utils"
 	"log"
 )
 

@@ -7,6 +7,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/jettdc/cortex/db"
 	"log"
+	"slices"
 )
 
 func newItemDelegate(keys *delegateKeyMap) list.DefaultDelegate {
@@ -27,6 +28,8 @@ func newItemDelegate(keys *delegateKeyMap) list.DefaultDelegate {
 			case key.Matches(msg, keys.choose):
 				item := getActiveItem(m)
 
+				print(item.Data().Key)
+
 				desc := item.Data().Value
 				err := clipboard.WriteAll(desc)
 				if err != nil {
@@ -40,12 +43,13 @@ func newItemDelegate(keys *delegateKeyMap) list.DefaultDelegate {
 
 				db.DeleteClipboardValue(item.Data().Id)
 
-				index := m.Index()
-				m.RemoveItem(index)
+				globalIndex := getGlobalIndexForItem(item.Data().Id, m)
+				m.SetItems(slices.Delete(m.Items(), globalIndex, globalIndex+1))
 
 				if len(m.Items()) == 0 {
 					keys.remove.SetEnabled(false)
 				}
+
 				return m.NewStatusMessage(statusMessageStyle("Deleted " + title))
 			}
 		}
@@ -104,9 +108,19 @@ func newDelegateKeyMap() *delegateKeyMap {
 	}
 }
 
+func getGlobalIndexForItem(id int, m *list.Model) int {
+	for i, listItem := range m.Items() {
+		myItem, ok := listItem.(item) // assert concrete type
+		if ok && myItem.Data().Id == id {
+			return i
+		}
+	}
+
+	return -1
+}
+
 func getActiveItem(m *list.Model) item {
-	index := m.Index()
-	x := m.Items()[index]
+	x := m.SelectedItem()
 	myItem, ok := x.(item) // assert concrete type
 	if ok {
 		return myItem

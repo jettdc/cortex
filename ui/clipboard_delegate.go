@@ -10,6 +10,8 @@ import (
 	"slices"
 )
 
+// TODO(jettdc): "v" or "p" to preview the full value
+
 func newItemDelegate(keys *delegateKeyMap) list.DefaultDelegate {
 	d := list.NewDefaultDelegate()
 
@@ -45,6 +47,10 @@ func newItemDelegate(keys *delegateKeyMap) list.DefaultDelegate {
 
 				globalIndex := getGlobalIndexForItem(item.Data().Id, m)
 				m.SetItems(slices.Delete(m.Items(), globalIndex, globalIndex+1))
+
+				// TODO(jettdc): Support keeping the filter after deleting.
+				// https://github.com/charmbracelet/bubbles/issues/632
+				m.ResetFilter()
 
 				if len(m.Items()) == 0 {
 					keys.remove.SetEnabled(false)

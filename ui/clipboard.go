@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/jettdc/cortex/db"
 	"os"
+	"strings"
 
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
@@ -14,13 +15,13 @@ var (
 	appStyle = lipgloss.NewStyle().Padding(1, 2)
 
 	titleStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color("#FFFDF5")).
-			Background(lipgloss.Color("#25A065")).
-			Padding(0, 1)
+		Foreground(lipgloss.Color("#FFFDF5")).
+		Background(lipgloss.Color("#25A065")).
+		Padding(0, 1)
 
 	statusMessageStyle = lipgloss.NewStyle().
-				Foreground(lipgloss.AdaptiveColor{Light: "#04B575", Dark: "#04B575"}).
-				Render
+		Foreground(lipgloss.AdaptiveColor{Light: "#04B575", Dark: "#04B575"}).
+		Render
 )
 
 type item struct {
@@ -45,7 +46,7 @@ func newModel(clipboardValues []*db.ClipboardValue) model {
 	for i, clipboardValue := range clipboardValues {
 		items[i] = item{
 			title:          clipboardValue.Key,
-			desc:           clipboardValue.Value,
+			desc:           processString(clipboardValue.Value),
 			clipboardValue: clipboardValue,
 		}
 	}
@@ -93,4 +94,11 @@ func ClipboardUi(clipboardValues []*db.ClipboardValue) {
 		fmt.Println("Error running program:", err)
 		os.Exit(1)
 	}
+}
+
+func processString(input string) string {
+	// Replace all newlines with the newline glyph (↵)
+	input = strings.ReplaceAll(input, "\n", "\u21B5")
+
+	return input
 }
